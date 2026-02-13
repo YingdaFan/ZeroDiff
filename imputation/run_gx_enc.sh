@@ -38,7 +38,7 @@ if [[ "$1" == "interference" || "$1" == "scatter" || "$1" == "scatterinterferenc
 fi
 
 MODEL_NAME=$1
-NUM_FOLDS=${2:-22}
+NUM_FOLDS=${2:-200}
 START_FOLD=${3:-3}  # Default: start from fold 3 (skip folds 1-2 for hyperparameter tuning)
 END_FOLD=${4:-$NUM_FOLDS}  # Default: run to the last fold
 NUM_HYPERPARAM_FOLDS=2  # Folds 1-2 for hyperparameter tuning

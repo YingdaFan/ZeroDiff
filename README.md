@@ -18,7 +18,7 @@ We term this **zero-shot cross-domain time series reconstruction**, a task funda
 <div align="center">
     <img width="840" alt="framework" src="assets/framework.png"/>
 </div>
-<p align="center"><em>The informed prior combines moment estimation (VAE) with dynamics learning. The diffusion process starts from N(Y&#770;, &sigma;&#772;<sub>T</sub>I) rather than pure noise, enabling calibration instead of generation. Estimated moments also guide optimization by weighting training locations based on their proximity to the target in moment space.</em></p>
+<p align="center"><em>The informed prior combines moment estimation (VAE) with dynamics learning. The diffusion process starts from N(Ŷ, σ̄<sub>T</sub>I) rather than pure noise, enabling calibration instead of generation. Estimated moments also guide optimization by weighting training locations based on their proximity to the target in moment space.</em></p>
 
 ZeroDiff operates in two stages:
 
@@ -112,7 +112,7 @@ pip install -r requirements.txt
 
 ## Data Preparation
 
-The pipeline expects a preprocessed `.parquet` file containing CAMELS basin data with meteorological drivers, catchment attributes, and streamflow observations. Place it at the repository root:
+The pipeline expects a preprocessed `.parquet` file containing CAMELS basin data with meteorological drivers, catchment attributes, and streamflow observations. The original CAMELS dataset is available at [https://ral.ucar.edu/solutions/products/camels](https://ral.ucar.edu/solutions/products/camels). Place the preprocessed file at the repository root:
 
 ```
 ZeroDiff/
@@ -175,6 +175,3 @@ Results are saved to:
 }
 ```
 
-## License
-
-This project is released under the MIT License.
