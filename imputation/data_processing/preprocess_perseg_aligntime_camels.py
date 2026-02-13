@@ -544,11 +544,13 @@ if __name__ == "__main__":
     os.makedirs(data_dir, exist_ok=True)
 
     # CAMELS dataset time range: 1989-01-01 to 2007-12-31 (19 years)
-    # Split: training (13 years) + validation (3 years) + test (3 years)
-    train_dates = ('1989-01-01', '2001-12-31')  # 13 years of training data
-    val_dates = ('2002-01-01', '2004-12-31')    # 3 years of validation data
-    #test_dates = ('2002-01-01', '2004-12-31')   # 3 years of test data
-    test_dates = ('1989-01-01', '2001-12-31')
+    # Training and test use the SAME time range because this is a spatial
+    # (cross-location) task, not a temporal one. The only difference between
+    # trn and tst is whether each basin's target labels are masked (tst) or
+    # observed (trn). Validation uses a separate time range for early stopping.
+    train_dates = ('1989-01-01', '2001-12-31')  # 13 years
+    val_dates = ('1989-01-01', '2001-12-31')    # Same as train (spatial split, not temporal)
+    test_dates = ('1989-01-01', '2001-12-31')   # Same as train (spatial split, not temporal)
     # Run preprocessing
     prep_data(
         csv_file='../../denormalized_camels_data_time.parquet',
