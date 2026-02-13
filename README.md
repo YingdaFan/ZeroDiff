@@ -1,1 +1,165 @@
-# ZeroDiff
+# ZeroDiff: Zero-Shot Time Series Reconstruction via Informed-Prior Diffusion
+
+**[ICML 2026 Under Review]**
+
+Time series modeling critically depends on the availability of target observations. Yet in practice, such observations are often entirely absent for a significant portion of domains -- while exogenous variables may be accessible everywhere, target measurements remain unavailable due to cost, infrastructure, or other constraints. This creates a challenging generalization problem: can models learn from domains with complete observations to reconstruct targets for domains where they have never been observed?
+
+We term this **zero-shot cross-domain time series reconstruction**, a task fundamentally different from conventional forecasting or imputation, as the model must infer temporal patterns for targets it has never seen during training.
+
+**ZeroDiff** addresses this by combining (1) cross-modal moment estimation via a conditional VAE, (2) dynamics learning in a normalized space, and (3) diffusion-based calibration with an informed prior, enabling probabilistic reconstruction in a truly zero-shot setting.
+
+<div align="center">
+    <img width="400" alt="concept" src="assets/concept.png"/>
+</div>
+<p align="center"><em>Exogenous reconstruction systematically underestimates extremes (a). ZeroDiff learns to correct these errors, recovering peak flows that regression approaches miss (b).</em></p>
+
+## Framework
+
+<div align="center">
+    <img width="840" alt="framework" src="assets/framework.png"/>
+</div>
+<p align="center"><em>The informed prior combines moment estimation (VAE) with dynamics learning. The diffusion process starts from N(Y&#770;, &sigma;&#772;<sub>T</sub>I) rather than pure noise, enabling calibration instead of generation. Estimated moments also guide optimization by weighting training locations based on their proximity to the target in moment space.</em></p>
+
+ZeroDiff operates in two stages:
+
+1. **Informed Prior Construction**: Estimate target distribution statistics (&mu;, &sigma;) from exogenous inputs via a conditional VAE, then learn shared temporal dynamics in normalized space using an LSTM. This yields a coarse but structured reconstruction at both observed and unobserved locations.
+
+2. **Diffusion-Based Calibration**: Apply a non-stationary diffusion process that learns to correct systematic errors in the prior. The forward process starts from the informed prior (not pure noise), and a moment-guided weighting scheme focuses training on locations most relevant to the target. A bidirectional denoiser leverages full temporal context for refinement.
+
+## Results
+
+Performance comparison across four datasets (NSE: higher is better; RMSE/MAE: lower is better).
+
+| Model | Streamflow NSE | Solar NSE | Temp NSE | Methane NSE |
+|:------|:--------------:|:---------:|:--------:|:-----------:|
+| CSDI | &dagger; | 0.019 | &dagger; | &dagger; |
+| SSSD | &dagger; | 0.446 | 0.605 | &dagger; |
+| CSBI | &dagger; | 0.449 | 0.243 | &dagger; |
+| DiffusionTS | &dagger; | 0.026 | 0.293 | &dagger; |
+| NsDiff | &dagger; | 0.515 | 0.700 | &dagger; |
+| f_&omega; (LSTM) | 0.131 | 0.345 | 0.813 | &dagger; |
+| **ZeroDiff** | **0.596** | **0.846** | **0.868** | **0.788** |
+
+&dagger; NSE < 0 (cross-location transfer failed).
+
+## Project Structure
+
+```
+ZeroDiff/
+├── imputation/
+│   ├── run_gx_enc.sh                 # Main entry point: K-fold cross-validation pipeline
+│   ├── data_processing/
+│   │   ├── preprocess_perseg_aligntime_camels.py   # Data preprocessing
+│   │   ├── modify_basin_to_nan_allmask.py           # Mask target basins
+│   │   ├── apply_vae.py                             # VAE moment estimation
+│   │   ├── postprocess_perseg_aligntime.py          # LSTM evaluation
+│   │   ├── postprocess_perseg_aligntime_raw.py      # Diffusion evaluation
+│   │   └── merge_basin_metrics.py                   # Aggregate metrics
+│   ├── spatial_extrapolation/
+│   │   └── vae_ablation_7_res.py      # Conditional VAE for moment estimation
+│   ├── lstm/
+│   │   ├── base.py                    # LSTM training (dynamics learning f_omega)
+│   │   ├── model.py                   # LSTM architecture
+│   │   ├── fill_prepped_npz_raw.py    # Fill predictions for Stage 2
+│   │   └── config.yml                 # LSTM hyperparameters
+│   └── diffusion/
+│       ├── configs/nsdiff.yml         # Diffusion hyperparameters
+│       ├── scripts/CAMELS/
+│       │   └── run_gx_enc_stage2.sh   # Stage 2 entry point
+│       └── src/
+│           ├── models/NsDiff.py       # Non-stationary diffusion model
+│           ├── layer/
+│           │   ├── mu_backbone_enc.py # Bidirectional encoder backbone
+│           │   ├── g_backbone.py      # Sigma estimation backbone
+│           │   ├── denoise.py         # Conditional guided denoiser
+│           │   └── nsdiff_utils.py    # Diffusion sampling utilities
+│           ├── nn/
+│           │   ├── wave_fusion.py     # Bidirectional wave fusion modules
+│           │   └── tmdm_diffusion_utils.py  # Beta schedule utilities
+│           ├── experiments/
+│           │   ├── diffcal_gx_enc.py  # Main diffusion experiment
+│           │   └── prob_forecast.py   # Base experiment class
+│           ├── datasets/              # Dataset loaders
+│           ├── dataloader/            # DataLoader wrappers
+│           ├── metrics/               # CRPS, PICP, QICE, ProbMAE/MSE/RMSE
+│           └── utils/                 # Sigma computation, argument parsing
+└── denormalized_camels_data_time.parquet  # CAMELS dataset (preprocessed)
+```
+
+## Prerequisites
+
+- Python 3.8+
+- PyTorch 1.12+
+- CUDA-compatible GPU
+
+```
+pip install torch numpy pandas scipy scikit-learn xarray tqdm pyyaml fire
+pip install torchmetrics torchvision
+pip install torch_timeseries
+```
+
+## Data Preparation
+
+The pipeline expects a preprocessed `.parquet` file containing CAMELS basin data with meteorological drivers, catchment attributes, and streamflow observations. Place it at the repository root:
+
+```
+ZeroDiff/
+└── denormalized_camels_data_time.parquet
+```
+
+The preprocessing script (`preprocess_perseg_aligntime_camels.py`) generates `prepped.npz` containing standardized training/validation/test splits.
+
+## Usage
+
+### Full K-Fold Cross-Validation
+
+```bash
+cd imputation
+
+# Run with default settings (22 folds, starting from fold 3)
+bash run_gx_enc.sh diffcal
+
+# Specify fold range
+bash run_gx_enc.sh diffcal 22 3 22
+
+# With wave fusion (bidirectional denoiser)
+bash run_gx_enc.sh scatter diffcal 22 3 22
+bash run_gx_enc.sh interference diffcal 22 3 22
+```
+
+Each fold executes a two-stage pipeline:
+
+**Stage 1** -- Informed Prior Construction:
+1. Preprocess data with per-basin standardization
+2. Mask target basins (simulate zero-shot setting)
+3. Estimate moments via conditional VAE
+4. Train LSTM on remaining basins
+5. Generate prior predictions for all basins
+
+**Stage 2** -- Diffusion Calibration:
+1. Train non-stationary diffusion model with informed prior
+2. Apply moment-guided loss weighting
+3. Generate calibrated predictions and evaluate
+
+### Output
+
+Results are saved to:
+- `lstm/output/` -- LSTM predictions and metrics
+- `diffusion/output/pred/` -- Diffusion predictions (.npy)
+- `diffusion/output/figure/` -- Visualization figures
+
+## Citation
+
+```bibtex
+@inproceedings{
+  zerodiff2026,
+  title={ZeroDiff: Zero-Shot Time Series Reconstruction via Informed-Prior Diffusion},
+  author={},
+  booktitle={},
+  year={2026}
+}
+```
+
+## License
+
+This project is released under the MIT License.
