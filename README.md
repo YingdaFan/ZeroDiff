@@ -121,10 +121,6 @@ bash run_gx_enc.sh diffcal
 
 # Specify fold range
 bash run_gx_enc.sh diffcal 22 3 22
-
-# With wave fusion (bidirectional denoiser)
-bash run_gx_enc.sh scatter diffcal 22 3 22
-bash run_gx_enc.sh interference diffcal 22 3 22
 ```
 
 Each fold executes a two-stage pipeline:
