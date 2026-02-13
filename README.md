@@ -123,16 +123,23 @@ The preprocessing script (`preprocess_perseg_aligntime_camels.py`) generates `pr
 
 ## Usage
 
-### Full K-Fold Cross-Validation
+### Leave-One-Out Cross-Validation
+
+We use a leave-one-location-out protocol: each fold masks one basin's target observations and trains on the rest. Folds 1--2 are reserved for hyperparameter tuning.
+
+> **Note:** The full CAMELS dataset contains 531 basins. Due to GitHub file size limits, this repository provides a 200-basin subset for demonstration. To reproduce the paper's full results, replace `denormalized_camels_data_time.parquet` with the complete 531-basin version.
 
 ```bash
 cd imputation
 
-# Run with default settings (22 folds, starting from fold 3)
-bash run_gx_enc.sh diffcal
+# 200-basin demo: leave-one-out (200 folds), run 100 test basins (folds 3-102)
+bash run_gx_enc.sh diffcal 200 3 102
 
-# Specify fold range
-bash run_gx_enc.sh diffcal 22 3 22
+# Full dataset (531 basins): leave-one-out, run 100 test basins
+# bash run_gx_enc.sh diffcal 531 3 102
+
+# Run a single fold for quick testing
+bash run_gx_enc.sh diffcal 200 3 3
 ```
 
 Each fold executes a two-stage pipeline:
