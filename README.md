@@ -33,14 +33,24 @@ Performance comparison across four datasets (NSE: higher is better; RMSE/MAE: lo
 | Model | Streamflow NSE | Solar NSE | Temp NSE | Methane NSE |
 |:------|:--------------:|:---------:|:--------:|:-----------:|
 | CSDI | &dagger; | 0.019 | &dagger; | &dagger; |
+| CSDI + f_&omega; | 0.060 | 0.307 | 0.722 | &dagger; |
 | SSSD | &dagger; | 0.446 | 0.605 | &dagger; |
+| SSSD + f_&omega; | 0.071 | 0.374 | 0.746 | &dagger; |
 | CSBI | &dagger; | 0.449 | 0.243 | &dagger; |
+| CSBI + f_&omega; | 0.084 | 0.402 | 0.725 | &dagger; |
 | DiffusionTS | &dagger; | 0.026 | 0.293 | &dagger; |
+| DiffusionTS + f_&omega; | 0.033 | 0.259 | 0.747 | &dagger; |
 | NsDiff | &dagger; | 0.515 | 0.700 | &dagger; |
+| NsDiff + f_&omega; | 0.105 | 0.473 | 0.763 | &dagger; |
+| | | | | |
 | f_&omega; (LSTM) | 0.131 | 0.345 | 0.813 | &dagger; |
+| &Phi;_&psi;,&omega; (informed prior) | 0.481 | 0.486 | 0.852 | 0.481 |
+| w/o prior | &dagger; | 0.323 | 0.829 | &dagger; |
+| w/o bidir. & w_k | 0.365 | 0.518 | 0.860 | 0.671 |
+| w/o bidir. | 0.463 | 0.519 | 0.859 | 0.623 |
 | **ZeroDiff** | **0.596** | **0.846** | **0.868** | **0.788** |
 
-&dagger; NSE < 0 (cross-location transfer failed).
+&dagger; NSE < 0 (cross-location transfer failed). f_&omega;: LSTM; + f_&omega; = pre-trained on f_&omega; predictions. bidir. = bidirectional denoiser; w_k = moment-guided weighting.
 
 ## Project Structure
 
