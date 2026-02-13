@@ -82,13 +82,20 @@ if [ ! -f "$PYTHON_SCRIPT" ]; then
     exit 1
 fi
 
+# Get batch size from prepped.npz (= number of basins)
+NPZ_PATH="../data_processing/data/prepped.npz"
+BATCH_SIZE=$(python3 -c "\
+import numpy as np; \
+print(int(np.load('$NPZ_PATH', allow_pickle=True)['n_segs']))")
+echo "Batch size (n_segs): $BATCH_SIZE"
+
 # Train with Pure Encoder backbone
 CUDA_DEVICE_ORDER=PCI_BUS_ID \
 python3 "$PYTHON_SCRIPT" \
     --dataset_type="CAMELS" \
-    --npz_path="../data_processing/data/prepped.npz" \
+    --npz_path="$NPZ_PATH" \
     --device="${CUDA_DEVICE:-cuda:0}" \
-    --batch_size=531 \
+    --batch_size=$BATCH_SIZE \
     --horizon=1 \
     --pred_len=365 \
     --windows=365 \
