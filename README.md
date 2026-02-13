@@ -117,12 +117,14 @@ pip install -r requirements.txt
 
 ## Data Preparation
 
-The pipeline expects a preprocessed `.parquet` file containing CAMELS basin data with meteorological drivers, catchment attributes, and streamflow observations. The original CAMELS dataset is available at [https://ral.ucar.edu/solutions/products/camels](https://ral.ucar.edu/solutions/products/camels). Place the preprocessed file at the repository root:
+The pipeline expects a preprocessed `.parquet` file containing CAMELS basin data with meteorological drivers, catchment attributes, and streamflow observations. The original CAMELS dataset (531 basins) is available at [https://ral.ucar.edu/solutions/products/camels](https://ral.ucar.edu/solutions/products/camels). Place the preprocessed file at the repository root:
 
 ```
 ZeroDiff/
 └── denormalized_camels_data_time.parquet
 ```
+
+**The included `.parquet` file contains a 200-basin subset of CAMELS for demonstration purposes.** To reproduce the full results reported in the paper, replace it with the complete 531-basin version.
 
 The preprocessing script (`preprocess_perseg_aligntime_camels.py`) generates `prepped.npz` containing standardized training/validation/test splits.
 
