@@ -103,10 +103,15 @@ ZeroDiff/
 ## Prerequisites
 
 - Python 3.10
-- PyTorch >= 2.0
 - CUDA-compatible GPU
 
+Install PyTorch (>= 2.0) with the appropriate CUDA version for your system following [https://pytorch.org](https://pytorch.org), then install the remaining dependencies:
+
 ```bash
+# Example: PyTorch with CUDA 11.8
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+
+# Other dependencies
 pip install -r requirements.txt
 ```
 
