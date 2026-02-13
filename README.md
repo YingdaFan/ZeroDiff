@@ -102,14 +102,12 @@ ZeroDiff/
 
 ## Prerequisites
 
-- Python 3.8+
-- PyTorch 1.12+
+- Python 3.10
+- PyTorch >= 2.0
 - CUDA-compatible GPU
 
-```
-pip install torch numpy pandas scipy scikit-learn xarray tqdm pyyaml fire
-pip install torchmetrics torchvision
-pip install torch_timeseries
+```bash
+pip install -r requirements.txt
 ```
 
 ## Data Preparation
