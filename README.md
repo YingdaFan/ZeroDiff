@@ -165,15 +165,9 @@ Results are saved to:
 - `diffusion/output/pred/` -- Diffusion predictions (.npy)
 - `diffusion/output/figure/` -- Visualization figures
 
-## Citation
+## References
 
-```bibtex
-@inproceedings{
-  zerodiff2026,
-  title={ZeroDiff: Zero-Shot Time Series Reconstruction via Informed-Prior Diffusion},
-  author={},
-  booktitle={},
-  year={2026}
-}
-```
+Parts of the code architecture are based on:
+
+- Ye, W., Xu, Z., & Gui, N. (2025). *Non-stationary Diffusion for Probabilistic Time Series Forecasting*. ICML 2025.
 
