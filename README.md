@@ -8,11 +8,6 @@ We term this **zero-shot cross-domain time series reconstruction**, a task funda
 
 **ZeroDiff** addresses this by combining (1) cross-modal moment estimation via a conditional VAE, (2) dynamics learning in a normalized space, and (3) diffusion-based calibration with an informed prior, enabling probabilistic reconstruction in a truly zero-shot setting.
 
-<div align="center">
-    <img width="400" alt="concept" src="assets/concept.png"/>
-</div>
-<p align="center"><em>Exogenous reconstruction systematically underestimates extremes (a). ZeroDiff learns to correct these errors, recovering peak flows that regression approaches miss (b).</em></p>
-
 ## Framework
 
 <div align="center">
