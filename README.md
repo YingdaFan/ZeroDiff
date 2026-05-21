@@ -2,6 +2,12 @@
 
 **[ICML 2026]**
 
+[Yingda Fan](mailto:yif47@pitt.edu)<sup>1</sup>, [Dan Lu](mailto:lud1@ornl.gov)<sup>2</sup>, [Xiaowei Jia](mailto:xiaowei@pitt.edu)<sup>1</sup>
+
+<sup>1</sup>Department of Computer Science, University of Pittsburgh &nbsp;&nbsp; <sup>2</sup>Oak Ridge National Laboratory
+
+---
+
 Time series modeling critically depends on the availability of target observations. Yet in practice, such observations are often entirely absent for a significant portion of domains -- while exogenous variables may be accessible everywhere, target measurements remain unavailable due to cost, infrastructure, or other constraints. This creates a challenging generalization problem: can models learn from domains with complete observations to reconstruct targets for domains where they have never been observed?
 
 We term this **zero-shot cross-domain time series reconstruction**, a task fundamentally different from conventional forecasting or imputation, as the model must infer temporal patterns for targets it has never seen during training.
@@ -165,9 +171,36 @@ Results are saved to:
 - `diffusion/output/pred/` -- Diffusion predictions (.npy)
 - `diffusion/output/figure/` -- Visualization figures
 
+## Citation
+
+If you find this work useful, please cite:
+
+```bibtex
+@inproceedings{fan2026zerodiff,
+  title     = {ZeroDiff: Zero-Shot Time Series Reconstruction via Informed-Prior Diffusion},
+  author    = {Fan, Yingda and Lu, Dan and Jia, Xiaowei},
+  booktitle = {Proceedings of the 43rd International Conference on Machine Learning (ICML)},
+  year      = {2026}
+}
+```
+
+> *The bibtex will be updated with the official PMLR volume, pages, and URL once the proceedings are published.*
+
 ## References
 
 Parts of the code architecture are based on:
 
 - Ye, W., Xu, Z., & Gui, N. (2025). *Non-stationary Diffusion for Probabilistic Time Series Forecasting*. ICML 2025.
+
+## Acknowledgments
+
+We thank the UCAR/NCAR research community for providing the CAMELS dataset.
+
+## Contact
+
+For questions or feedback, please open an [issue](https://github.com/YingdaFan/ZeroDiff/issues) or contact Yingda Fan (yif47@pitt.edu).
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
