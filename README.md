@@ -27,36 +27,6 @@ ZeroDiff operates in two stages:
 
 2. **Diffusion-Based Calibration**: Apply a non-stationary diffusion process that learns to correct systematic errors in the prior. The forward process starts from the informed prior (not pure noise), and a moment-guided weighting scheme focuses training on locations most relevant to the target. A bidirectional denoiser leverages full temporal context for refinement.
 
-## Results
-
-NSE comparison across four datasets (higher is better). &dagger; denotes NSE < 0 (cross-location transfer failed).
-
-**Diffusion Baselines.** Each baseline is evaluated standalone and with our dynamics learning module (+ f_&omega;) as informed input.
-
-| Model | Streamflow | Solar | Temp | Methane |
-|:------|:----------:|:-----:|:----:|:-------:|
-| CSDI | &dagger; | 0.019 | &dagger; | &dagger; |
-| CSDI + f_&omega; | 0.060 | 0.307 | 0.722 | &dagger; |
-| SSSD | &dagger; | 0.446 | 0.605 | &dagger; |
-| SSSD + f_&omega; | 0.071 | 0.374 | 0.746 | &dagger; |
-| CSBI | &dagger; | 0.449 | 0.243 | &dagger; |
-| CSBI + f_&omega; | 0.084 | 0.402 | 0.725 | &dagger; |
-| DiffusionTS | &dagger; | 0.026 | 0.293 | &dagger; |
-| DiffusionTS + f_&omega; | 0.033 | 0.259 | 0.747 | &dagger; |
-| NsDiff | &dagger; | 0.515 | 0.700 | &dagger; |
-| NsDiff + f_&omega; | 0.105 | 0.473 | 0.763 | &dagger; |
-
-**Ablation Study.** We progressively add each component of ZeroDiff to show its contribution.
-
-| Variant | Streamflow | Solar | Temp | Methane | Description |
-|:--------|:----------:|:-----:|:----:|:-------:|:------------|
-| f_&omega; | 0.131 | 0.345 | 0.813 | &dagger; | Dynamics learning only (LSTM) |
-| &Phi;_&psi;,&omega; | 0.481 | 0.486 | 0.852 | 0.481 | + Moment estimation (VAE) |
-| w/o prior | &dagger; | 0.323 | 0.829 | &dagger; | Diffusion from pure noise (no informed prior) |
-| w/o bidir. & w_k | 0.365 | 0.518 | 0.860 | 0.671 | + Informed prior |
-| w/o bidir. | 0.463 | 0.519 | 0.859 | 0.623 | + Moment-guided weighting |
-| **ZeroDiff** | **0.596** | **0.846** | **0.868** | **0.788** | **+ Bidirectional denoiser (full model)** |
-
 ## Project Structure
 
 ```
@@ -118,14 +88,14 @@ pip install -r requirements.txt
 
 ## Data Preparation
 
-The pipeline expects a preprocessed `.parquet` file containing CAMELS basin data with meteorological drivers, catchment attributes, and streamflow observations. The original CAMELS dataset (531 basins) is available at [https://ral.ucar.edu/solutions/products/camels](https://ral.ucar.edu/solutions/products/camels). Place the preprocessed file at the repository root:
+The pipeline expects a preprocessed `.parquet` file containing CAMELS basin data with meteorological drivers, catchment attributes, and streamflow observations. The CAMELS dataset is available at [https://ral.ucar.edu/solutions/products/camels](https://ral.ucar.edu/solutions/products/camels); following common practice in deep-learning hydrology, our experiments use the widely adopted 531-basin benchmark subset. Place the preprocessed file at the repository root:
 
 ```
 ZeroDiff/
 └── denormalized_camels_data_time.parquet
 ```
 
-**The included `.parquet` file contains a 200-basin subset of CAMELS for demonstration purposes.** To reproduce the full results reported in the paper, replace it with the complete 531-basin version.
+**The included `.parquet` file contains a 200-basin subset for demonstration purposes.** To reproduce the results reported in the paper, replace it with the complete 531-basin benchmark subset.
 
 The preprocessing script (`preprocess_perseg_aligntime_camels.py`) generates `prepped.npz` containing standardized training/validation/test splits.
 
@@ -134,8 +104,6 @@ The preprocessing script (`preprocess_perseg_aligntime_camels.py`) generates `pr
 ### Leave-One-Out Cross-Validation
 
 We use a leave-one-location-out protocol: each fold masks one basin's target observations and trains on the rest. Folds 1--2 are reserved for hyperparameter tuning.
-
-> **Note:** The full CAMELS dataset contains 531 basins. Due to GitHub file size limits, this repository provides a 200-basin subset for demonstration. To reproduce the paper's full results, replace `denormalized_camels_data_time.parquet` with the complete 531-basin version.
 
 ```bash
 cd imputation
