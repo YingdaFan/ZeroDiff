@@ -1,6 +1,6 @@
 # ZeroDiff: Zero-Shot Time Series Reconstruction via Informed-Prior Diffusion
 
-**[ICML 2026 Under Review]**
+**[ICML 2026]**
 
 Time series modeling critically depends on the availability of target observations. Yet in practice, such observations are often entirely absent for a significant portion of domains -- while exogenous variables may be accessible everywhere, target measurements remain unavailable due to cost, infrastructure, or other constraints. This creates a challenging generalization problem: can models learn from domains with complete observations to reconstruct targets for domains where they have never been observed?
 
