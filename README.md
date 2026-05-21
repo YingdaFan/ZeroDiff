@@ -2,7 +2,7 @@
 
 **[ICML 2026]**
 
-[Yingda Fan](mailto:yif47@pitt.edu)<sup>1</sup>, [Dan Lu](mailto:lud1@ornl.gov)<sup>2</sup>, [Xiaowei Jia](mailto:xiaowei@pitt.edu)<sup>1</sup>
+Yingda Fan<sup>1</sup>, Dan Lu<sup>2</sup>, Xiaowei Jia<sup>1</sup>
 
 <sup>1</sup>Department of Computer Science, University of Pittsburgh &nbsp;&nbsp; <sup>2</sup>Oak Ridge National Laboratory
 
@@ -192,13 +192,9 @@ Parts of the code architecture are based on:
 
 - Ye, W., Xu, Z., & Gui, N. (2025). *Non-stationary Diffusion for Probabilistic Time Series Forecasting*. ICML 2025.
 
-## Acknowledgments
-
-We thank the UCAR/NCAR research community for providing the CAMELS dataset.
-
 ## Contact
 
-For questions or feedback, please open an [issue](https://github.com/YingdaFan/ZeroDiff/issues) or contact Yingda Fan (yif47@pitt.edu).
+For questions or feedback, please open an [issue](https://github.com/YingdaFan/ZeroDiff/issues) or contact Yingda Fan (yf474@rutgers.edu).
 
 ## License
 
